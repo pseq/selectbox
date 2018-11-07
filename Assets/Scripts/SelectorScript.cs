@@ -8,7 +8,8 @@ public class SelectorScript : EventTrigger {
 
     private Vector2 startDragPoint;
     private Vector2 endDragPoint;
-    private ArrayList selectableUnits;
+    //private ArrayList selectableUnits;
+    private List<GameObject> selectableUnits;
     private GameObject selectionRect;
     private RectTransform selectionTransform;
     public GameObject gameControl;
@@ -26,7 +27,11 @@ public class SelectorScript : EventTrigger {
         selectionTransform.anchorMax = Vector2.zero;
         gameObject.GetComponent<RectTransform>().sizeDelta = gameObject.transform.parent.GetComponent<RectTransform>().sizeDelta;
         // Получаем массив выделяемых объектов
-        selectableUnits = new ArrayList();
+        selectableUnits = new List<GameObject>();
+        foreach (SelectableScript selectable in FindObjectsOfType(typeof(SelectableScript)))
+        {
+            selectableUnits.Add(selectable.gameObject);
+        }
     }
 
     public override void OnBeginDrag(PointerEventData eventData)
@@ -37,12 +42,6 @@ public class SelectorScript : EventTrigger {
         startDragPoint = Input.mousePosition;
         // Ставим в нее угол рамки.
         selectionTransform.anchoredPosition = startDragPoint;
-    }
-
-    //Find all selectable objects
-    public void AddAllSelectable()
-    {
-
     }
 
     // add new selectable object
