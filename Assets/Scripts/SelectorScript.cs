@@ -26,7 +26,7 @@ public class SelectorScript : EventTrigger {
         selectionTransform.anchorMax = Vector2.zero;
         gameObject.GetComponent<RectTransform>().sizeDelta = gameObject.transform.parent.GetComponent<RectTransform>().sizeDelta;
         // Получаем массив выделяемых объектов
-        //selectableUnits = gameControl.GetComponent<GameControl>().GetMinions();
+        selectableUnits = new ArrayList();
     }
 
     public override void OnBeginDrag(PointerEventData eventData)
@@ -37,6 +37,24 @@ public class SelectorScript : EventTrigger {
         startDragPoint = Input.mousePosition;
         // Ставим в нее угол рамки.
         selectionTransform.anchoredPosition = startDragPoint;
+    }
+
+    //Find all selectable objects
+    public void AddAllSelectable()
+    {
+
+    }
+
+    // add new selectable object
+    public void AddSelectable(GameObject obj)
+    {
+        selectableUnits.Add(obj);
+    }
+
+    //Delete new selectable object
+    public void DeleteSelectable(GameObject obj)
+    {
+        selectableUnits.Add(obj);
     }
 
     // Вспомогательный метод пересчета координат углов прямоугольника в rect.
@@ -91,14 +109,12 @@ public class SelectorScript : EventTrigger {
         Rect SelectRect = CoordsToRect(startDragPoint, endDragPoint);
 
         // Сначала снимаем выделение со всех объектов.
-        //foreach (GameObject SelectableUnit in selectableUnits) SelectableUnit.gameObject.GetComponent<UnitScript>().UnsetSelected();
+        foreach (GameObject SelectableUnit in selectableUnits) SelectableUnit.gameObject.GetComponent<SelectableScript>().UnsetSelected();
         // А потом - выделяем те, что попали в прямоугольник.
-        /*
         foreach (GameObject SelectableUnit in selectableUnits)
         {
             Vector2 UnitScreenPosition = Camera.main.WorldToScreenPoint(SelectableUnit.transform.position);
-            if (SelectRect.Contains(UnitScreenPosition)) SelectableUnit.gameObject.GetComponent<UnitScript>().SetSelected();
+            if (SelectRect.Contains(UnitScreenPosition)) SelectableUnit.gameObject.GetComponent<SelectableScript>().SetSelected();
         }
-        */
     }
 }
