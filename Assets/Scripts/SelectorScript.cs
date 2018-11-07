@@ -8,11 +8,11 @@ public class SelectorScript : EventTrigger {
 
     private Vector2 startDragPoint;
     private Vector2 endDragPoint;
-    //private ArrayList selectableUnits;
     private List<GameObject> selectableUnits;
     private GameObject selectionRect;
     private RectTransform selectionTransform;
-    public GameObject gameControl;
+
+    public GameObject DebugSphere;
 
     // Use this for initialization
     void Start () {
@@ -32,6 +32,9 @@ public class SelectorScript : EventTrigger {
         {
             selectableUnits.Add(selectable.gameObject);
         }
+
+        //Debug
+        DebugSphere = GameObject.FindWithTag("DebugSphere");
     }
 
     public override void OnBeginDrag(PointerEventData eventData)
@@ -42,6 +45,9 @@ public class SelectorScript : EventTrigger {
         startDragPoint = Input.mousePosition;
         // Ставим в нее угол рамки.
         selectionTransform.anchoredPosition = startDragPoint;
+
+        //Debug
+        DebugSphere.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(startDragPoint.x, startDragPoint.y, Camera.main.nearClipPlane));
     }
 
     // add new selectable object
