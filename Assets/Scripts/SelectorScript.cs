@@ -7,12 +7,11 @@ using UnityEngine.UI;
 public class SelectorScript : EventTrigger {
 
     private Vector2 startDragPoint;
+    private Vector3 worldStartDragPoint;
     private Vector2 endDragPoint;
     private List<GameObject> selectableUnits;
     private GameObject selectionRect;
     private RectTransform selectionTransform;
-
-    public GameObject DebugSphere;
 
     // Use this for initialization
     void Start () {
@@ -32,9 +31,6 @@ public class SelectorScript : EventTrigger {
         {
             selectableUnits.Add(selectable.gameObject);
         }
-
-        //Debug
-        DebugSphere = GameObject.FindWithTag("DebugSphere");
     }
 
     public override void OnBeginDrag(PointerEventData eventData)
@@ -46,8 +42,7 @@ public class SelectorScript : EventTrigger {
         // Ставим в нее угол рамки.
         selectionTransform.anchoredPosition = startDragPoint;
 
-        //Debug
-        DebugSphere.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(startDragPoint.x, startDragPoint.y, Camera.main.nearClipPlane));
+        worldStartDragPoint = Camera.main.ScreenToWorldPoint(new Vector3(startDragPoint.x, startDragPoint.y, 0));
     }
 
     // add new selectable object
@@ -98,10 +93,14 @@ public class SelectorScript : EventTrigger {
 
     public override void OnDrag(PointerEventData eventData)
     {
+        startDragPoint = Camera.main.WorldToScreenPoint(new Vector3(worldStartDragPoint.x, worldStartDragPoint.y, 0));
+
         // Переставляем пивот рамки в зависимости от направления выделения.
         selectionTransform.pivot = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).position;
         // Рисуем рамку вслед за курсором.
         selectionTransform.sizeDelta = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).size;
+
+
     }
 
     public override void OnEndDrag(PointerEventData eventData)
