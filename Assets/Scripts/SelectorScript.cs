@@ -42,7 +42,7 @@ public class SelectorScript : EventTrigger {
         // Ставим в нее угол рамки.
         selectionTransform.anchoredPosition = startDragPoint;
 
-        worldStartDragPoint = Camera.main.ScreenToWorldPoint(new Vector3(startDragPoint.x, startDragPoint.y, 0));
+        worldStartDragPoint = Camera.main.ScreenToWorldPoint(new Vector3(startDragPoint.x, startDragPoint.y, Camera.main.nearClipPlane));
     }
 
     // add new selectable object
@@ -93,12 +93,13 @@ public class SelectorScript : EventTrigger {
 
     public override void OnDrag(PointerEventData eventData)
     {
-        startDragPoint = Camera.main.WorldToScreenPoint(new Vector3(worldStartDragPoint.x, worldStartDragPoint.y, 0));
+        //startDragPoint = Camera.main.WorldToScreenPoint(new Vector3(worldStartDragPoint.x, worldStartDragPoint.y, Camera.main.nearClipPlane));
 
         // Переставляем пивот рамки в зависимости от направления выделения.
         selectionTransform.pivot = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).position;
         // Рисуем рамку вслед за курсором.
-        selectionTransform.sizeDelta = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).size;
+        //selectionTransform.sizeDelta = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).size;
+        selectionTransform.sizeDelta = CoordsToRect(Camera.main.WorldToScreenPoint(new Vector3(worldStartDragPoint.x, worldStartDragPoint.y, Camera.main.nearClipPlane)), Input.mousePosition, new Vector2(1f, 0f)).size;
 
 
     }
