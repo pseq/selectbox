@@ -13,6 +13,13 @@ public class SelectorScript : EventTrigger {
     private GameObject selectionRect;
     private RectTransform selectionTransform;
 
+    public Canvas canvas;
+    private GameObject debugSphere;
+    private GameObject debugSphere2;
+    private GameObject debugBut;
+    private RectTransform butTransform;
+
+
     // Use this for initialization
     void Start () {
         // Получаем объект и трансформ рамки выделения.
@@ -31,6 +38,9 @@ public class SelectorScript : EventTrigger {
         {
             selectableUnits.Add(selectable.gameObject);
         }
+
+        canvas = GetComponentInParent<Canvas>();
+        debugSphere = GameObject.FindGameObjectWithTag("Respawn");
     }
 
     public override void OnBeginDrag(PointerEventData eventData)
@@ -42,7 +52,8 @@ public class SelectorScript : EventTrigger {
         // Ставим в нее угол рамки.
         selectionTransform.anchoredPosition = startDragPoint;
 
-        worldStartDragPoint = Camera.main.ScreenToWorldPoint(new Vector3(startDragPoint.x, startDragPoint.y, Camera.main.nearClipPlane));
+        worldStartDragPoint = Camera.main.ScreenToWorldPoint(new Vector3(startDragPoint.x, startDragPoint.y, canvas.planeDistance));
+        debugSphere.transform.position = worldStartDragPoint;
     }
 
     // add new selectable object
@@ -91,17 +102,30 @@ public class SelectorScript : EventTrigger {
         return rectangle;
     }
 
+    /*
+    IEnumerator SomeName()
+    {
+        while (нажата_кнопка)
+        {
+            //перерисовываем рамку
+            yield return new WaitForEndOfFrame();
+        }
+        //делаем выделение
+    }
+    */
+
     public override void OnDrag(PointerEventData eventData)
     {
-        //startDragPoint = Camera.main.WorldToScreenPoint(new Vector3(worldStartDragPoint.x, worldStartDragPoint.y, Camera.main.nearClipPlane));
-
+        //startDragPoint = Camera.main.WorldToScreenPoint(new Vector3(worldStartDragPoint.x, worldStartDragPoint.y, canvas.planeDistance));
+        startDragPoint = Camera.main.WorldToScreenPoint(worldStartDragPoint);
+        
+        //переставляем начало выделения при движении камеры
+        selectionTransform.anchoredPosition = startDragPoint;
+       
         // Переставляем пивот рамки в зависимости от направления выделения.
         selectionTransform.pivot = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).position;
         // Рисуем рамку вслед за курсором.
-        //selectionTransform.sizeDelta = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).size;
-        selectionTransform.sizeDelta = CoordsToRect(Camera.main.WorldToScreenPoint(new Vector3(worldStartDragPoint.x, worldStartDragPoint.y, Camera.main.nearClipPlane)), Input.mousePosition, new Vector2(1f, 0f)).size;
-
-
+        selectionTransform.sizeDelta = CoordsToRect(startDragPoint, Input.mousePosition, new Vector2(1f, 0f)).size;
     }
 
     public override void OnEndDrag(PointerEventData eventData)
